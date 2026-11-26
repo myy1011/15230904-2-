@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飞行汽车安全分析：亿航EH216-S全方位安全分析</title>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0;font-family:"Microsoft Yahei",sans-serif;}
+        body{background:#f5f7fa;color:#222;line-height:1.7;padding:0 16px;max-width:1100px;margin:0 auto;}
+        header{background:#701919;color:#fff;padding:32px 24px;border-radius:0 0 12px 12px;margin-bottom:24px;}
+        h1{font-size:28px;margin-bottom:8px;}
+        .info{opacity:0.9;font-size:15px;}
+        section{background:#fff;padding:24px;border-radius:10px;margin-bottom:20px;box-shadow:0 2px 8px #00000012;}
+        h2{color:#701919;border-left:4px solid #b83838;padding-left:12px;margin-bottom:16px;font-size:22px;}
+        h3{font-size:18px;margin:16px 0 8px;color:#882222;}
+        p{margin-bottom:12px;}
+        ul{padding-left:24px;margin-bottom:12px;}
+        table{width:100%;border-collapse:collapse;margin:16px 0;}
+        td,th{border:1px solid #ddd;padding:10px;text-align:left;}
+        th{background:#f7e7e7;}
+        .ref{font-size:14px;color:#555;}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>全方位安全分析 —— 亿航EH216-S载人eVTOL</h1>
+        <div class="info">课程：飞行汽车技术基础｜作业2：系统安全工程分析</div>
+    </header>
+
+    <section>
+        <h2>1 分析对象概述</h2>
+        <p>本次安全分析延续上一次作业，针对亿航EH216-S双座无人驾驶eVTOL，基于系统安全工程思路，从危险源识别、失效模式、安全设计、适航安全、运行安全、应急处置多维度开展分析。</p>
+        <p>EH216-S：8轴16桨分布式多旋翼、全自动无人驾驶、纯电动力，国内首款取得CAAC载人eVTOL适航证飞行器。</p>
+    </section>
+
+    <section>
+        <h2>2 危险源识别（HAZOP危险与可操作性分析）</h2>
+        <h3>2.1 动力与电池子系统危险源</h3>
+        <ul>
+            <li>锂电池热失控、电芯短路、穿刺起火；</li>
+            <li>电池BMS失效、过充过放、低温容量骤降；</li>
+            <li>单台/多台电机故障、电机失速、驱动器故障。</li>
+        </ul>
+        <h3>2.2 飞控与感知子系统危险源</h3>
+        <ul>
+            <li>GNSS/IMU信号丢失、定位漂移；</li>
+            <li>避障雷达、视觉传感器失效，障碍物识别漏检；</li>
+            <li>飞控计算机故障、通信链路中断、遥控/数传失联。</li>
+        </ul>
+        <h3>2.3 结构与气动危险源</h3>
+        <ul>
+            <li>旋翼断裂、机臂疲劳裂纹、紧固件脱落；</li>
+            <li>大风、湍流、侧风等恶劣气象下气动失稳；</li>
+        </ul>
+        <h3>2.4 运行与空域危险源</h3>
+        <ul>
+            <li>低空空中交通冲突，与无人机、鸟类、建筑物相撞；</li>
+            <li>起降平台故障、地面人员闯入；</li>
+            <li>人为误操作、地面调度指令错误。</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>3 FMEA失效模式与影响分析</h2>
+        <table>
+            <tr>
+                <th>子系统</th>
+                <th>失效模式</th>
+                <th>失效后果</th>
+                <th>安全措施</th>
+            </tr>
+            <tr>
+                <td>旋翼电机</td>
+                <td>单电机停转</td>
+                <td>姿态偏移</td>
+                <td>多旋翼冗余，剩余动力可维持可控迫降</td>
+            </tr>
+            <tr>
+                <td>动力电池</td>
+                <td>热失控起火</td>
+                <td>空中起火、坠机</td>
+                <td>电池隔热封装、BMS热监测、温控系统</td>
+            </tr>
+            <tr>
+                <td>飞控计算机</td>
+                <td>主控宕机</td>
+                <td>失去控制</td>
+                <td>三余度飞控，自动切换备份控制器</td>
+            </tr>
+            <tr>
+                <td>感知避障</td>
+                <td>障碍物漏检</td>
+                <td>碰撞</td>
+                <td>雷达+视觉多传感器融合，多重冗余感知</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>4 安全设计与冗余架构（核心）</h2>
+        <h3>4.1 动力冗余</h3>
+        <p>16个独立旋翼电机，分布式布局，单轴甚至相邻一轴失效，飞行器仍保持姿态可控，执行自动迫降，不直接坠毁。</p>
+        <h3>4.2 飞控冗余</h3>
+        <p>多冗余飞控计算机、多套IMU、多通道通信链路，故障自动投票、自动切换备份通道，无单点故障。</p>
+        <h3>4.3 电池安全设计</h3>
+        <p>模组化电池包，独立BMS，温度实时监测，隔热阻燃结构，电芯隔离设计；设置电压、电流、温度三重保护阈值。</p>
+        <h3>4.4 无人驾驶安全逻辑</h3>
+        <p>预设航线+自动返航、故障自动迫降逻辑；不依赖机载驾驶员，规避人为操作失误风险；地面指挥中心实时监控。</p>
+    </section>
+
+    <section>
+        <h2>5 适航安全合规分析</h2>
+        <p>EH216-S是国内首个通过CAAC载人eVTOL适航审定的机型，满足民航针对新型航空器的安全要求：</p>
+        <ul>
+            <li>完成大量地面疲劳、振动、环境试验、故障注入试验；</li>
+            <li>开展上万架次试飞，覆盖故障、恶劣环境等边界工况；</li>
+            <li>适航审定对失效概率、安全目标、应急能力做量化约束，满足载人飞行器安全目标。</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>6 运行安全与应急处置</h2>
+        <h3>6.1 运行约束</h3>
+        <p>限定运行空域、限定气象条件（风速、降雨、能见度），禁止超边界飞行；起降点为专用vertiport，隔离地面人员。</p>
+        <h3>6.2 应急流程</h3>
+        <ul>
+            <li>动力故障：就近选择安全区域自动迫降；</li>
+            <li>通信失联：执行预设失联保护，原地悬停后择机降落；</li>
+            <li>电池异常：优先就近降落，禁止继续飞行；</li>
+            <li>起火风险：快速下降，优先脱离人员密集区域。</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>7 现存安全短板与风险</h2>
+        <ul>
+            <li>多旋翼构型没有固定翼滑翔能力，完全依赖动力，所有动力同时失效时无滑翔缓冲；</li>
+            <li>锂电池热失控仍是高风险，电池起火后抑制手段有限；</li>
+            <li>复杂城市环境下障碍物、飞鸟、电线识别难度大；</li>
+            <li>低空交通管理UTM系统还不成熟，空域冲突风险长期存在；</li>
+            <li>噪声、坠机风险带来公众安全顾虑。</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>8 安全改进建议</h2>
+        <ul>
+            <li>电池增加灭火抑爆内置装置，进一步抑制热失控蔓延；</li>
+            <li>增加降落伞应急系统，作为终极兜底保护；</li>
+            <li>优化多传感器融合算法，提升弱光、雨雾环境避障能力；</li>
+            <li>完善低空交通管控，建立统一空域冲突预警；</li>
+            <li>完善地面运维检修流程，定期旋翼、机臂疲劳检测。</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>9 总结</h2>
+        <p>EH216-S依靠分布式冗余动力、余度飞控、全自动故障处置，在设计层面满足载人适航安全要求，相比早期原型机安全水平成熟；但电池安全、无滑翔兜底、城市低空运行冲突仍是核心安全痛点，属于“可控但仍有边界风险”的载人eVTOL。后续安全提升重点在终极兜底防护、电池热安全、低空空域管控。</p>
+    </section>
+
+    <section>
+        <h2>参考文献</h2>
+        <p class="ref">[1] 亿航EH216-S适航审定资料、安全白皮书</p>
+        <p class="ref">[2] 民航局eVTOL适航管理规范、系统安全工程SAE ARP4754</p>
+        <p class="ref">[3] 载人eVTOL失效模式FMEA与风险评估研究</p>
+        <p class="ref">[4] 锂电池航空安全、低空交通系统安全相关文献</p>
+    </section>
+</body>
+</html>
